@@ -1,0 +1,34 @@
+version: '3'
+services:
+  api1:
+    build: ./api
+    networks:
+      - examen
+  api2:
+    build: ./api
+    networks:
+      - examen
+  web:
+    build: ./web
+    volumes:
+      - ./web/src:/var/www/html
+    environment:
+      API: http://localhost/api
+    networks:
+      - examen  
+  proxy:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - examen
+    depends_on:
+      - api1
+      - api2
+      - web
+
+networks:
+  examen:
+    driver: bridge
